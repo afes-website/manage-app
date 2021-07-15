@@ -4,6 +4,7 @@ import {
   Card,
   CardContent,
   CircularProgress,
+  Grid,
   List,
   ListItem,
   ListItemIcon,
@@ -289,135 +290,150 @@ const CheckInScan: React.VFC = () => {
 
   return (
     <div>
-      <CardList className={classes.list}>
-        {/* QR Scanner */}
-        <Card>
-          <CardContent
-            className={clsx(classes.noPadding, classes.resultChipBase)}
-          >
-            <QRScanner
-              onScanFunc={handleScan}
-              videoStop={false}
-              color={
-                { rsv: rsvCheckStatus, guest: guestCheckStatus }[
-                  activeScanner
-                ] ?? undefined
-              }
-            />
-            {/* Result Chip */}
-            <ResultChip ref={resultChipRef} className={classes.resultChip} />
-          </CardContent>
-        </Card>
-
-        {/* Error Alert */}
-        {errorMessage && (
-          <Card>
-            <CardContent className={classes.noPadding}>
-              <Alert severity="error">{errorMessage}</Alert>
-            </CardContent>
-          </Card>
-        )}
-
-        {/* ID List */}
-        <Card>
-          <CardContent className={classes.noPadding}>
-            <List>
-              <ListItem disabled={activeScanner !== "rsv"}>
-                <ListItemIcon className={classes.progressWrapper}>
-                  {rsvCheckStatus === "success" ? (
-                    <CheckCircle className={classes.successIcon} />
-                  ) : (
-                    <Assignment />
-                  )}
-                  {rsvCheckStatus === "loading" && (
-                    <CircularProgress className={classes.progress} size={36} />
-                  )}
-                </ListItemIcon>
-                <ListItemText
-                  primary={latestRsvId ? latestRsvId : "-"}
-                  secondary={
-                    <>
-                      予約 ID
-                      {latestRsv && (
-                        <>
-                          {" • "}
-                          <ReservationTermInfo term={latestRsv.term} />
-                        </>
-                      )}
-                    </>
+      <Grid container className={classes.list}>
+        <Grid item xs={12} md={6}>
+          <CardList>
+            {/* QR Scanner */}
+            <Card>
+              <CardContent
+                className={clsx(classes.noPadding, classes.resultChipBase)}
+              >
+                <QRScanner
+                  onScanFunc={handleScan}
+                  videoStop={false}
+                  color={
+                    { rsv: rsvCheckStatus, guest: guestCheckStatus }[
+                      activeScanner
+                    ] ?? undefined
                   }
                 />
-              </ListItem>
-              <ListItem disabled={activeScanner !== "guest"}>
-                <ListItemIcon>
-                  <WristBand />
-                </ListItemIcon>
-                <ListItemText
-                  primary={latestGuestId ? latestGuestId : "-"}
-                  secondary="ゲスト ID (リストバンド ID)"
+                {/* Result Chip */}
+                <ResultChip
+                  ref={resultChipRef}
+                  className={classes.resultChip}
                 />
-                {latestRsv && (
-                  <ListItemSecondaryAction>
-                    <Typography
-                      display="inline"
-                      className={clsx({
-                        [classes.limitOver]:
-                          latestRsv.member_checked_in >= latestRsv.member_all,
-                      })}
-                    >
-                      {`${latestRsv.member_checked_in + 1}人目`}
-                    </Typography>
-                    <Typography
-                      display="inline"
-                      variant="caption"
-                      className={classes.countLimit}
-                    >
-                      {`/${latestRsv.member_all}人`}
-                    </Typography>
-                  </ListItemSecondaryAction>
-                )}
-              </ListItem>
-              {checkedInGuestIds.map((guestId) => (
-                <ListItem disabled key={guestId}>
-                  <ListItemIcon>
-                    <CheckCircle className={classes.successIcon} />
-                  </ListItemIcon>
-                  <ListItemText
-                    primary={
-                      <>
-                        {latestRsv && (
-                          <span
-                            className={classes.termColorBadge}
-                            style={{
-                              background: wristBandPaletteColor(
-                                latestRsv.term.guest_type
-                              ).main,
-                            }}
-                          />
-                        )}
-                        {guestId}
-                      </>
-                    }
-                  />
-                </ListItem>
-              ))}
-            </List>
-          </CardContent>
-        </Card>
+              </CardContent>
+            </Card>
 
-        {/* 中断して最初からやり直すボタン */}
-        {(activeScanner !== "rsv" || totalCheckStatus === "error") && (
-          <Button
-            variant="text"
-            color="secondary"
-            className={classes.bottomButton}
-            startIcon={<Replay />}
-            onClick={clearAll}
-          >
-            中断して最初からやり直す
-          </Button>
-        )}
-      </CardList>
+            {/* Error Alert */}
+            {errorMessage && (
+              <Card>
+                <CardContent className={classes.noPadding}>
+                  <Alert severity="error">{errorMessage}</Alert>
+                </CardContent>
+              </Card>
+            )}
+          </CardList>
+        </Grid>
+
+        <Grid item xs={12} md={6} spacing={2}>
+          <CardList>
+            {/* ID List */}
+            <Card>
+              <CardContent className={classes.noPadding}>
+                <List>
+                  <ListItem disabled={activeScanner !== "rsv"}>
+                    <ListItemIcon className={classes.progressWrapper}>
+                      {rsvCheckStatus === "success" ? (
+                        <CheckCircle className={classes.successIcon} />
+                      ) : (
+                        <Assignment />
+                      )}
+                      {rsvCheckStatus === "loading" && (
+                        <CircularProgress
+                          className={classes.progress}
+                          size={36}
+                        />
+                      )}
+                    </ListItemIcon>
+                    <ListItemText
+                      primary={latestRsvId ? latestRsvId : "-"}
+                      secondary={
+                        <>
+                          予約 ID
+                          {latestRsv && (
+                            <>
+                              {" • "}
+                              <ReservationTermInfo term={latestRsv.term} />
+                            </>
+                          )}
+                        </>
+                      }
+                    />
+                  </ListItem>
+                  <ListItem disabled={activeScanner !== "guest"}>
+                    <ListItemIcon>
+                      <WristBand />
+                    </ListItemIcon>
+                    <ListItemText
+                      primary={latestGuestId ? latestGuestId : "-"}
+                      secondary="ゲスト ID (リストバンド ID)"
+                    />
+                    {latestRsv && (
+                      <ListItemSecondaryAction>
+                        <Typography
+                          display="inline"
+                          className={clsx({
+                            [classes.limitOver]:
+                              latestRsv.member_checked_in >=
+                              latestRsv.member_all,
+                          })}
+                        >
+                          {`${latestRsv.member_checked_in + 1}人目`}
+                        </Typography>
+                        <Typography
+                          display="inline"
+                          variant="caption"
+                          className={classes.countLimit}
+                        >
+                          {`/${latestRsv.member_all}人`}
+                        </Typography>
+                      </ListItemSecondaryAction>
+                    )}
+                  </ListItem>
+                  {checkedInGuestIds.map((guestId) => (
+                    <ListItem disabled key={guestId}>
+                      <ListItemIcon>
+                        <CheckCircle className={classes.successIcon} />
+                      </ListItemIcon>
+                      <ListItemText
+                        primary={
+                          <>
+                            {latestRsv && (
+                              <span
+                                className={classes.termColorBadge}
+                                style={{
+                                  background: wristBandPaletteColor(
+                                    latestRsv.term.guest_type
+                                  ).main,
+                                }}
+                              />
+                            )}
+                            {guestId}
+                          </>
+                        }
+                      />
+                    </ListItem>
+                  ))}
+                </List>
+              </CardContent>
+            </Card>
+
+            {/* 中断して最初からやり直すボタン */}
+            {(activeScanner !== "rsv" || totalCheckStatus === "error") && (
+              <Button
+                variant="text"
+                color="secondary"
+                className={classes.bottomButton}
+                startIcon={<Replay />}
+                onClick={clearAll}
+              >
+                中断して最初からやり直す
+              </Button>
+            )}
+          </CardList>
+        </Grid>
+      </Grid>
 
       {/* 結果表示ポップアップ */}
       <ResultPopup

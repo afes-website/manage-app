@@ -9,7 +9,6 @@ import {
 import TopBar from "components/TopBar";
 import BottomNav from "components/BottomNav";
 import { useTitleContext } from "libs/title";
-import ProvidersProvider from "components/ProvidersProvider";
 import { useAuth } from "libs/auth";
 
 const useStyles = makeStyles((theme) =>
@@ -84,12 +83,4 @@ const MainLayout: React.VFC<PropsWithChildren<unknown>> = ({ children }) => {
   );
 };
 
-const MainLayoutWithProviders: React.VFC<PropsWithChildren<unknown>> = ({
-  children,
-}) => (
-  <ProvidersProvider>
-    <MainLayout>{children}</MainLayout>
-  </ProvidersProvider>
-);
-
-export default MainLayoutWithProviders;
+export default MainLayout;

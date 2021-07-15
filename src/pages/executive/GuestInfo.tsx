@@ -254,123 +254,136 @@ const GuestInfo: React.VFC = () => {
           />
         </Tabs>
       </Paper>
-      <CardList className={classes.list}>
-        <Card className={classes.resultChipBase}>
-          <QRScanner
-            onScanFunc={handleScan}
-            videoStop={false}
-            color={status || undefined}
-          />
-          {status && (
-            <ResultChip ref={resultChipRef} className={classes.resultChip} />
-          )}
-        </Card>
-        {status == "error" && (
-          <Card>
-            <Alert severity="error">
-              {errorDialog.open ? (
-                errorDialog.message.map((msg) => (
-                  <span key={msg} className={classes.alertMessage}>
-                    {msg}
-                  </span>
-                ))
-              ) : (
-                <span className={classes.alertMessage}>{errorMessage}</span>
+      <Grid container className={classes.list}>
+        <Grid xs={12} md={6}>
+          <CardList>
+            <Card className={classes.resultChipBase}>
+              <QRScanner
+                onScanFunc={handleScan}
+                videoStop={false}
+                color={status || undefined}
+              />
+              {status && (
+                <ResultChip
+                  ref={resultChipRef}
+                  className={classes.resultChip}
+                />
               )}
-            </Alert>
-          </Card>
-        )}
-        {mode === "guest" && (
-          <>
-            <Card>
-              <CardContent
-                className={clsx({
-                  [classes.cardTitle]: guestId,
-                })}
-              >
-                <Typography
-                  variant="body2"
-                  color="textSecondary"
-                  gutterBottom={true}
-                >
-                  ゲスト情報
-                </Typography>
-                {!guestId && (
-                  <Typography variant="caption" align="center">
-                    まだゲストQRコードをスキャンしていません。
-                  </Typography>
-                )}
-              </CardContent>
-              {guestId && <GuestInfoList guestId={guestId} guest={guestInfo} />}
             </Card>
-            <Card>
-              <CardContent
-                className={clsx({
-                  [classes.cardTitle]: activityLogs && exhStatus,
-                })}
-              >
-                <Typography
-                  variant="body2"
-                  color="textSecondary"
-                  gutterBottom={true}
-                >
-                  行動履歴一覧
-                </Typography>
-                {!guestId ? (
-                  <Typography variant="caption" align="center">
-                    まだゲストQRコードをスキャンしていません。
-                  </Typography>
-                ) : (
-                  !activityLogs && (
-                    <Typography variant="caption" align="center">
-                      まだゲストQRコードをスキャンしていません。
+            {status == "error" && (
+              <Card>
+                <Alert severity="error">
+                  {errorDialog.open ? (
+                    errorDialog.message.map((msg) => (
+                      <span key={msg} className={classes.alertMessage}>
+                        {msg}
+                      </span>
+                    ))
+                  ) : (
+                    <span className={classes.alertMessage}>{errorMessage}</span>
+                  )}
+                </Alert>
+              </Card>
+            )}
+          </CardList>
+        </Grid>
+        <Grid xs={12} md={6}>
+          <CardList>
+            {mode === "guest" && (
+              <>
+                <Card>
+                  <CardContent
+                    className={clsx({
+                      [classes.cardTitle]: guestId,
+                    })}
+                  >
+                    <Typography
+                      variant="body2"
+                      color="textSecondary"
+                      gutterBottom={true}
+                    >
+                      ゲスト情報
                     </Typography>
-                  )
-                )}
-                {activityLogs?.length === 0 && (
-                  <Typography variant="caption" align="center">
-                    展示への入退出記録がありません。
+                    {!guestId && (
+                      <Typography variant="caption" align="center">
+                        まだゲストQRコードをスキャンしていません。
+                      </Typography>
+                    )}
+                  </CardContent>
+                  {guestId && (
+                    <GuestInfoList guestId={guestId} guest={guestInfo} />
+                  )}
+                </Card>
+                <Card>
+                  <CardContent
+                    className={clsx({
+                      [classes.cardTitle]: activityLogs && exhStatus,
+                    })}
+                  >
+                    <Typography
+                      variant="body2"
+                      color="textSecondary"
+                      gutterBottom={true}
+                    >
+                      行動履歴一覧
+                    </Typography>
+                    {!guestId ? (
+                      <Typography variant="caption" align="center">
+                        まだゲストQRコードをスキャンしていません。
+                      </Typography>
+                    ) : (
+                      !activityLogs && (
+                        <Typography variant="caption" align="center">
+                          まだゲストQRコードをスキャンしていません。
+                        </Typography>
+                      )
+                    )}
+                    {activityLogs?.length === 0 && (
+                      <Typography variant="caption" align="center">
+                        展示への入退出記録がありません。
+                      </Typography>
+                    )}
+                  </CardContent>
+                  {activityLogs && exhStatus && activityLogs.length > 0 && (
+                    <LogList logs={activityLogs} status={exhStatus} />
+                  )}
+                </Card>
+              </>
+            )}
+            {mode === "rsv" && (
+              <Card>
+                <CardContent
+                  className={clsx({
+                    [classes.cardTitle]: rsvId,
+                  })}
+                >
+                  <Typography
+                    variant="body2"
+                    color="textSecondary"
+                    gutterBottom={true}
+                  >
+                    予約情報
                   </Typography>
-                )}
-              </CardContent>
-              {activityLogs && exhStatus && activityLogs.length > 0 && (
-                <LogList logs={activityLogs} status={exhStatus} />
-              )}
-            </Card>
-          </>
-        )}
-        {mode === "rsv" && (
-          <Card>
-            <CardContent
-              className={clsx({
-                [classes.cardTitle]: rsvId,
-              })}
+                  {!rsvId && (
+                    <Typography variant="caption" align="center">
+                      まだ予約QRコードをスキャンしていません。
+                    </Typography>
+                  )}
+                </CardContent>
+                {rsvId && <PrivateInfoList rsvId={rsvId} info={rsvInfo} />}
+              </Card>
+            )}
+            <Typography
+              variant="body2"
+              color="textSecondary"
+              align="center"
+              gutterBottom={true}
             >
-              <Typography
-                variant="body2"
-                color="textSecondary"
-                gutterBottom={true}
-              >
-                予約情報
-              </Typography>
-              {!rsvId && (
-                <Typography variant="caption" align="center">
-                  まだ予約QRコードをスキャンしていません。
-                </Typography>
-              )}
-            </CardContent>
-            {rsvId && <PrivateInfoList rsvId={rsvId} info={rsvInfo} />}
-          </Card>
-        )}
-        <Typography
-          variant="body2"
-          color="textSecondary"
-          align="center"
-          gutterBottom={true}
-        >
-          情報の取り扱いには十分注意してください。
-        </Typography>
-      </CardList>
+              情報の取り扱いには十分注意してください。
+            </Typography>
+          </CardList>
+        </Grid>
+      </Grid>
 
       {/* 直接入力ボタン */}
       <DirectInputFab

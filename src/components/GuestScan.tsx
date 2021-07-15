@@ -3,6 +3,7 @@ import {
   Card,
   CardContent,
   CircularProgress,
+  Grid,
   List,
   ListItem,
   ListItemIcon,
@@ -133,57 +134,71 @@ const GuestScan: React.VFC<Props> = (props) => {
 
   return (
     <div>
-      <CardList className={classes.list}>
-        {/* QR Scanner */}
-        <Card>
-          <CardContent
-            className={clsx(classes.noPadding, classes.resultChipBase)}
-          >
-            <QRScanner
-              onScanFunc={handleGuestIdScan}
-              videoStop={false}
-              color={checkStatus ?? undefined}
-            />
-            {/* Result Chip */}
-            <ResultChip ref={resultChipRef} className={classes.resultChip} />
-          </CardContent>
-        </Card>
-
-        {/* Error Alert */}
-        {errorMessage && (
-          <Card>
-            <CardContent className={classes.noPadding}>
-              <Alert severity="error">{errorMessage}</Alert>
-            </CardContent>
-          </Card>
-        )}
-
-        {/* ID List */}
-        <Card>
-          <CardContent className={classes.noPadding}>
-            <List>
-              <ListItem>
-                <ListItemIcon className={classes.progressWrapper}>
-                  {checkStatus === "success" ? (
-                    <CheckCircle className={classes.successIcon} />
-                  ) : (
-                    <WristBand />
-                  )}
-                  {checkStatus === "loading" && (
-                    <CircularProgress className={classes.progress} size={36} />
-                  )}
-                </ListItemIcon>
-                <ListItemText
-                  primary={latestGuestId ? latestGuestId : "-"}
-                  secondary="ゲスト ID (リストバンド ID)"
+      <Grid container className={classes.list}>
+        <Grid item xs={12} md={6}>
+          <CardList>
+            {/* QR Scanner */}
+            <Card>
+              <CardContent
+                className={clsx(classes.noPadding, classes.resultChipBase)}
+              >
+                <QRScanner
+                  onScanFunc={handleGuestIdScan}
+                  videoStop={false}
+                  color={checkStatus ?? undefined}
                 />
-              </ListItem>
-            </List>
-          </CardContent>
-        </Card>
+                {/* Result Chip */}
+                <ResultChip
+                  ref={resultChipRef}
+                  className={classes.resultChip}
+                />
+              </CardContent>
+            </Card>
 
-        {isExh && <ExhInfoCard />}
-      </CardList>
+            {/* Error Alert */}
+            {errorMessage && (
+              <Card>
+                <CardContent className={classes.noPadding}>
+                  <Alert severity="error">{errorMessage}</Alert>
+                </CardContent>
+              </Card>
+            )}
+          </CardList>
+        </Grid>
+
+        <Grid item xs={12} md={6}>
+          <CardList>
+            {/* ID List */}
+            <Card>
+              <CardContent className={classes.noPadding}>
+                <List>
+                  <ListItem>
+                    <ListItemIcon className={classes.progressWrapper}>
+                      {checkStatus === "success" ? (
+                        <CheckCircle className={classes.successIcon} />
+                      ) : (
+                        <WristBand />
+                      )}
+                      {checkStatus === "loading" && (
+                        <CircularProgress
+                          className={classes.progress}
+                          size={36}
+                        />
+                      )}
+                    </ListItemIcon>
+                    <ListItemText
+                      primary={latestGuestId ? latestGuestId : "-"}
+                      secondary="ゲスト ID (リストバンド ID)"
+                    />
+                  </ListItem>
+                </List>
+              </CardContent>
+            </Card>
+
+            {isExh && <ExhInfoCard />}
+          </CardList>
+        </Grid>
+      </Grid>
 
       {/* 直接入力ボタン */}
       <DirectInputFab

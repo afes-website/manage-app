@@ -8,6 +8,7 @@ import {
   makeStyles,
   useTheme,
   Theme,
+  useMediaQuery,
 } from "@material-ui/core";
 import { ArrowBack, ArrowBackIos } from "@material-ui/icons";
 import { useHistory } from "react-router-dom";
@@ -65,6 +66,8 @@ const TopBar: React.VFC<Props> = ({ title, scrollTop, className }) => {
     return parser.getDevice().vendor === "Apple";
   }, []);
 
+  const isTablet = useMediaQuery(theme.breakpoints.up("sm"));
+
   function onDrawerClose(): undefined {
     setIsDrawerOpen(false);
     return undefined;
@@ -104,18 +107,20 @@ const TopBar: React.VFC<Props> = ({ title, scrollTop, className }) => {
                 {isApple ? <ArrowBackIos /> : <ArrowBack />}
               </IconButton>
             ) : (
-              <IconButton
-                className={clsx(classes.menuIcon, classes.accountButton)}
-                color="inherit"
-                onClick={() => {
-                  setIsDrawerOpen(true);
-                }}
-              >
-                <AccountIcon
-                  account={auth.get_current_user()}
-                  fontSize="large"
-                />
-              </IconButton>
+              !isTablet && (
+                <IconButton
+                  className={clsx(classes.menuIcon, classes.accountButton)}
+                  color="inherit"
+                  onClick={() => {
+                    setIsDrawerOpen(true);
+                  }}
+                >
+                  <AccountIcon
+                    account={auth.get_current_user()}
+                    fontSize="large"
+                  />
+                </IconButton>
+              )
             ))}
           <Typography variant="h6" align="center" className={classes.title}>
             {title}

@@ -290,14 +290,16 @@ const AccountDrawer: React.VFC<Props> = (props) => {
   );
 };
 
-const PermissionsList: React.VFC = () => {
+export const PermissionsList: React.VFC<{ className?: string }> = ({
+  className,
+}) => {
   const classes = useStyles();
   const auth = useAuth();
 
   const currentUser = auth.get_current_user();
   if (!currentUser) return null;
   return (
-    <div className={classes.permissionsList}>
+    <div className={clsx(classes.permissionsList, className)}>
       {Object.entries(currentUser.permissions).map(([name, val]) => (
         <PermissionIcon
           permName={name}

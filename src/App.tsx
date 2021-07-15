@@ -1,10 +1,13 @@
-import React, { useEffect, useState } from "react";
+import React, { PropsWithChildren, useEffect, useMemo, useState } from "react";
+import { Theme, useMediaQuery, useTheme } from "@material-ui/core";
 import TypesafeRouter from "components/TypesafeRouter";
-import routes from "libs/routes";
-import { createBrowserHistory } from "history";
-import NotFound from "pages/NotFound";
+import ProvidersProvider from "components/ProvidersProvider";
 import MainLayout from "layouts/Main";
+import TabletLayout from "layouts/Tablet";
+import NotFound from "pages/NotFound";
+import { createBrowserHistory } from "history";
 import Auth, { AuthContext } from "libs/auth";
+import routes from "libs/routes";
 
 const App: React.VFC = () => {
   const [history] = useState(createBrowserHistory());
@@ -35,8 +38,10 @@ const App: React.VFC = () => {
   useEffect(() => {
     handleResize();
     window.addEventListener("resize", handleResize);
+    window.addEventListener("orientationchange", handleResize);
     return () => {
       window.removeEventListener("resize", handleResize);
+      window.removeEventListener("orientationchange", handleResize);
     };
   }, []);
 
@@ -45,10 +50,27 @@ const App: React.VFC = () => {
       <TypesafeRouter
         routes={routes}
         history={history}
-        layout={MainLayout}
+        layout={LayoutWithProviders}
         fallback={NotFound}
       />
     </AuthContext.Provider>
+  );
+};
+
+const LayoutWithProviders: React.VFC<PropsWithChildren<unknown>> = ({
+  children,
+}) => {
+  const theme = useTheme<Theme>();
+  const isTablet = useMediaQuery(theme.breakpoints.up("sm"));
+
+  const Layout = useMemo(() => (isTablet ? TabletLayout : MainLayout), [
+    isTablet,
+  ]);
+
+  return (
+    <ProvidersProvider>
+      <Layout>{children}</Layout>
+    </ProvidersProvider>
   );
 };
 
